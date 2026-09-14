@@ -1,793 +1,1163 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador ENAMED 2026 🩺</title>
+  <title>Simulador & Auditoria ENAMED 2026 • TRI & Notas de Corte</title>
+  <meta name="description" content="Simulador avançado do ENAMED 2026 com cálculo oficial de TRI pelo Modelo de Rasch (1PL), cruzamento de gabaritos dos 4 maiores cursinhos e simulação de vagas de Residência Médica ENARE na Bahia.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0A1628;
-      --card-dark: #1E3A5F;
-      --accent-blue: #3B82F6;
-      --accent-hover: #2563EB;
-      --text-light: #F8FAFC;
-      --text-muted: #94A3B8;
+      --bg-main: #0B0F19;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1F2937;
+      --bg-surface-hover: #263346;
+      --border-subtle: #1F2937;
+      --border-medium: #374151;
+      --border-highlight: #38BDF8;
+      
+      --text-primary: #F9FAFB;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+      
+      --primary: #38BDF8;
+      --primary-hover: #0EA5E9;
+      --primary-glow: rgba(56, 189, 248, 0.25);
+      
       --success: #10B981;
+      --success-bg: rgba(16, 185, 129, 0.12);
+      --success-border: rgba(16, 185, 129, 0.3);
+      
       --warning: #F59E0B;
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --warning-border: rgba(245, 158, 11, 0.3);
+      
       --danger: #EF4444;
-      --border-color: #334155;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --danger-border: rgba(239, 68, 68, 0.3);
+      
+      --purple: #A855F7;
+      --purple-bg: rgba(168, 85, 247, 0.12);
     }
-    
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background-color: var(--bg-dark);
-      color: var(--text-light);
-      line-height: 1.5;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding-bottom: 90px;
     }
 
+    /* Container */
     .container {
-      max-width: 1200px;
+      max-width: 1240px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 0 20px;
     }
 
+    /* Header */
     header {
+      padding: 40px 0 24px;
       text-align: center;
-      padding: 40px 0 20px;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .badge-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary);
     }
 
     h1 {
-      font-size: 2.5rem;
-      color: var(--text-light);
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #FFFFFF 30%, #94A3B8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      max-width: 640px;
+      margin: 0 auto 24px;
+    }
+
+    /* Controls Bar & Booklet Switcher */
+    .controls-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 24px;
+      margin-bottom: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .booklet-tabs {
+      display: inline-flex;
+      background: var(--bg-main);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .booklet-tab {
+      padding: 10px 22px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .booklet-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .booklet-tab.active {
+      background: var(--bg-surface-elevated);
+      color: var(--primary);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-medium);
+    }
+
+    .quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-medium);
+      color: var(--text-primary);
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--bg-surface-hover);
+      border-color: var(--text-secondary);
+    }
+
+    .btn-action-primary {
+      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+      border-color: #38BDF8;
+      color: #FFFFFF;
+    }
+
+    .btn-action-primary:hover {
+      background: linear-gradient(135deg, #0369A1 0%, #075985 100%);
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    /* Progress & Legend */
+    .progress-bar-container {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .progress-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .progress-counter {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .progress-track {
+      width: 180px;
+      height: 8px;
+      background: var(--bg-surface-elevated);
+      border-radius: 9999px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38BDF8, #10B981);
+      width: 0%;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .legend-group {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .legend-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot.consenso { background: var(--success); box-shadow: 0 0 6px rgba(16, 185, 129, 0.4); }
+    .dot.divergente { background: var(--warning); box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+    .dot.recurso { background: var(--danger); box-shadow: 0 0 6px rgba(239, 68, 68, 0.4); }
+
+    /* Question Matrix */
+    .questions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .question-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 14px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .question-card:hover {
+      border-color: var(--border-medium);
+      transform: translateY(-1px);
+    }
+
+    .question-card.answered {
+      border-color: rgba(56, 189, 248, 0.4);
+      background: rgba(31, 41, 55, 0.6);
+    }
+
+    .q-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       margin-bottom: 10px;
     }
 
-    h2 {
-      color: var(--accent-blue);
-      margin-bottom: 20px;
-      font-size: 1.5rem;
+    .q-number {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
     }
-    
-    h3 {
-      margin-bottom: 15px;
+
+    .q-equiv-badge {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    .q-options {
+      display: flex;
+      gap: 6px;
+      justify-content: space-between;
+    }
+
+    .btn-opt {
+      flex: 1;
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border-medium);
+      background: var(--bg-surface-elevated);
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-opt:hover {
+      background: var(--bg-surface-hover);
+      color: var(--text-primary);
+      border-color: var(--primary);
+    }
+
+    .btn-opt.selected {
+      background: linear-gradient(135deg, #0284C7, #0369A1);
+      border-color: #38BDF8;
+      color: #FFFFFF;
+      box-shadow: 0 0 10px var(--primary-glow);
+    }
+
+    /* Floating Action Bar */
+    .floating-bar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-medium);
+      border-radius: 9999px;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      z-index: 1000;
+      max-width: 90%;
+    }
+
+    .floating-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .floating-text strong {
+      color: var(--primary);
+    }
+
+    .btn-calculate {
+      background: linear-gradient(135deg, #0284C7, #0EA5E9);
+      border: none;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      font-size: 0.98rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-calculate:hover {
+      background: linear-gradient(135deg, #0369A1, #0284C7);
+      transform: scale(1.02);
+      box-shadow: 0 6px 24px rgba(14, 165, 233, 0.6);
+    }
+
+    /* Dashboard & Results */
+    .dashboard-section {
+      display: grid;
+      gap: 28px;
+      margin-top: 10px;
+    }
+
+    .card-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 26px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Hero TRI Card */
+    .tri-hero {
+      background: linear-gradient(135deg, #111827 0%, #172554 50%, #0F172A 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tri-hero::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .tri-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      align-items: center;
+    }
+
+    .tri-big-score {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      background: linear-gradient(135deg, #38BDF8 0%, #A855F7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 10px 0;
+    }
+
+    .tri-sub-score {
       font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .tri-sub-score strong {
+      color: #F8FAFC;
+    }
+
+    .tri-meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tri-meta-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.92rem;
+    }
+
+    .tri-meta-label {
+      color: var(--text-secondary);
+    }
+
+    .tri-meta-val {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Score by prep course */
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .course-card {
+      background: var(--bg-main);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .course-card:hover {
+      border-color: var(--border-medium);
+    }
+
+    .course-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .course-score {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--primary);
+    }
+
+    .course-extra {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .course-card.highlight {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border-color: var(--success-border);
+    }
+
+    .course-card.highlight .course-score {
+      color: var(--success);
+    }
+
+    /* Specialty Simulator */
+    .simulator-controls {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    select, .input-control {
+      width: 100%;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      border: 1px solid var(--border-medium);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, .input-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+
+    .toggle-bonus-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--bg-main);
+      border: 1px solid var(--border-medium);
+      color: var(--text-secondary);
+      border-radius: 10px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .toggle-bonus-btn.active {
+      background: var(--purple-bg);
+      border-color: var(--purple);
+      color: #E9D5FF;
+    }
+
+    /* Table styles */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      text-align: left;
+    }
+
+    thead th {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 14px 16px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-subtle);
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.04em;
+    }
+
+    tbody td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-primary);
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-approved { background: var(--success-bg); color: #34D399; border: 1px solid var(--success-border); }
+    .badge-waitlist { background: var(--warning-bg); color: #FBBF24; border: 1px solid var(--warning-border); }
+    .badge-below { background: var(--danger-bg); color: #F87171; border: 1px solid var(--danger-border); }
+    
+    .badge-consenso { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .badge-divergente { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .badge-anulacao { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.25); }
+
+    /* Filters tabs for question analysis */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .filter-btn {
+      background: var(--bg-main);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #0F172A;
+    }
+
+    .note-row {
+      background: rgba(15, 23, 42, 0.6);
+      font-size: 0.84rem;
+      color: #94A3B8;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .note-row td {
+      padding: 8px 16px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 30px 20px;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* Step 1: Caderno Selection */
-    .caderno-selection {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      margin-top: 50px;
-    }
-
-    .btn-large {
-      padding: 20px 40px;
-      font-size: 1.2rem;
-      border-radius: 12px;
-      background-color: var(--card-dark);
-      color: var(--text-light);
-      border: 2px solid var(--border-color);
-      cursor: pointer;
-      transition: all 0.3s;
-      width: 100%;
-      max-width: 400px;
-    }
-
-    .btn-large:hover {
-      border-color: var(--accent-blue);
-      transform: translateY(-2px);
-    }
-
-    .btn-primary {
-      background-color: var(--accent-blue);
-      border-color: var(--accent-blue);
-    }
-    
-    .btn-primary:hover {
-      background-color: var(--accent-hover);
-    }
-
-    #caderno2-msg {
-      color: var(--warning);
-      margin-top: 10px;
-      text-align: center;
-    }
-
-    /* Step 2: Question Grid */
-    .progress-bar {
-      background-color: var(--card-dark);
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      position: sticky;
-      top: 10px;
-      z-index: 100;
-      border: 1px solid var(--border-color);
-    }
-
-    .legend {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 20px;
-      font-size: 0.9rem;
-      flex-wrap: wrap;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .dot.consenso { background-color: var(--success); }
-    .dot.divergente { background-color: var(--warning); }
-
-    .questions-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 40px;
-    }
-
-    .question-card {
-      background-color: var(--card-dark);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-    }
-
-    .q-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-
-    .options {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-      justify-content: center;
-    }
-
-    .opt-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid var(--border-color);
-      background: transparent;
-      color: var(--text-light);
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s;
-    }
-
-    .opt-btn:hover {
-      background-color: rgba(59, 130, 246, 0.2);
-    }
-
-    .opt-btn.selected {
-      background-color: var(--accent-blue);
-      border-color: var(--accent-blue);
-    }
-
-    .action-bar {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .btn {
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      font-weight: bold;
-      border: none;
-      color: white;
-      transition: all 0.2s;
-    }
-
-    /* Step 3: Results */
-    .dashboard {
-      display: grid;
-      gap: 30px;
-    }
-
-    .panel {
-      background-color: var(--card-dark);
-      padding: 24px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-
-    .score-card {
-      background: linear-gradient(135deg, rgba(30,58,95,1) 0%, rgba(10,22,40,1) 100%);
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      border: 1px solid var(--border-color);
-    }
-
-    .score-val {
-      font-size: 2rem;
-      font-weight: bold;
-      color: var(--accent-blue);
-      margin: 10px 0;
-    }
-    
-    .nota-realista .score-val {
-      color: var(--success);
-    }
-
-    .tri-panel {
-      text-align: center;
-      background: linear-gradient(135deg, #1E3A5F 0%, #1e40af 100%);
-    }
-    
-    .tri-score {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin: 15px 0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    th {
-      background-color: rgba(0,0,0,0.2);
-      font-weight: 600;
-    }
-
-    .status-badge {
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      display: inline-block;
-    }
-
-    .status-acerto { background-color: rgba(16, 185, 129, 0.2); color: var(--success); }
-    .status-erro { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); }
-    .status-disputa { background-color: rgba(245, 158, 11, 0.2); color: var(--warning); }
-    
-    select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      background-color: var(--bg-dark);
-      color: var(--text-light);
-      border: 1px solid var(--border-color);
-      font-size: 1rem;
-      margin-bottom: 20px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 40px 0;
-      margin-top: 50px;
-      border-top: 1px solid var(--border-color);
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 768px) {
-      .questions-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .score-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .table-responsive {
-        overflow-x: auto;
-      }
+    /* Responsive */
+    @media (max-width: 860px) {
+      h1 { font-size: 2rem; }
+      .simulator-controls { grid-template-columns: 1fr; }
+      .controls-panel { flex-direction: column; align-items: stretch; }
+      .booklet-tabs { width: 100%; justify-content: center; }
+      .quick-actions { justify-content: center; }
+      .tri-big-score { font-size: 2.75rem; }
+      .questions-grid { grid-template-columns: repeat(2, 1fr); }
+      .floating-bar { padding: 10px 16px; gap: 10px; width: calc(100% - 30px); }
+      .floating-text { display: none; }
+      .btn-calculate { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 <body>
+
   <div class="container">
     <header>
-      <h1>Simulador ENAMED 2026 🩺</h1>
-      <p>Simule sua nota e compare com as notas de corte do ENARE</p>
+      <div class="badge-top">
+        <span class="badge-dot"></span>
+        Modelo de Rasch 1PL • Portaria INEP 42/2025
+      </div>
+      <h1>Simulador ENAMED 2026</h1>
+      <p>Auditoria comparada de gabaritos (MedCof, Medway, Estratégia MED, MedGrupo), cálculo oficial de TRI e projeção de vagas ENARE na Bahia.</p>
     </header>
 
-    <!-- STEP 1: CADERNO SELECTION -->
-    <main id="step1" class="caderno-selection">
-      <h2>Selecione o seu Caderno</h2>
-      <button class="btn-large btn-primary" onclick="selectCaderno(1)">Caderno 1</button>
-      <button class="btn-large" onclick="selectCaderno(2)">Caderno 2</button>
-      <p id="caderno2-msg" class="hidden">Gabarito do Caderno 2 em breve. Fique atento às atualizações!</p>
-    </main>
+    <!-- Controls Bar -->
+    <div class="controls-panel">
+      <div class="booklet-tabs">
+        <button id="tab-c1" class="booklet-tab active" onclick="switchBooklet(1)">
+          📘 Caderno 1
+        </button>
+        <button id="tab-c2" class="booklet-tab" onclick="switchBooklet(2)">
+          📗 Caderno 2
+        </button>
+      </div>
 
-    <!-- STEP 2: QUESTIONS INPUT -->
-    <main id="step2" class="hidden">
-      <div class="progress-bar">
-        <span id="progress-text">0/100 questões respondidas</span>
+      <div class="quick-actions">
+        <button class="btn-action btn-action-primary" onclick="loadSampleAnswers()">
+          ⚡ Preencher Gabarito Real (78 acertos)
+        </button>
+        <button class="btn-action" onclick="clearAnswers()">
+          🗑️ Limpar
+        </button>
+        <button class="btn-action" onclick="scrollToResults()" id="btn-scroll-results" style="display: none;">
+          📊 Ver Resultados
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress & Legend Bar -->
+    <div class="progress-bar-container">
+      <div class="progress-info">
+        <div class="progress-counter" id="progress-text">0/100 respondidas (0%)</div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-bar"></div>
+        </div>
       </div>
       
-      <div class="legend">
-        <div class="legend-item"><span class="dot consenso"></span> Consenso entre cursinhos</div>
-        <div class="legend-item"><span class="dot divergente"></span> Divergência (possível anulação)</div>
+      <div class="legend-group">
+        <div class="legend-pill"><span class="dot consenso"></span> Consenso (84)</div>
+        <div class="legend-pill"><span class="dot divergente"></span> Divergente (16)</div>
+        <div class="legend-pill"><span class="dot recurso"></span> Recurso Forte (6)</div>
       </div>
+    </div>
 
-      <div id="questions-container" class="questions-grid"></div>
+    <!-- Questions Matrix (Step 1) -->
+    <div id="questions-grid" class="questions-grid"></div>
 
-      <div class="action-bar">
-        <button class="btn btn-primary" onclick="calculateResults()">Calcular Resultado</button>
+    <!-- Floating Action Bar -->
+    <div class="floating-bar" id="floating-bar">
+      <div class="floating-text">
+        <span id="float-answered-count">0</span> de 100 preenchidas (<strong id="float-percentage">0%</strong>)
       </div>
-    </main>
+      <button class="btn-calculate" onclick="calculateAndShowResults()">
+        <span>⚡ Calcular Resultado & Simular Vagas</span>
+      </button>
+    </div>
 
-    <!-- STEP 3: RESULTS DASHBOARD -->
-    <main id="step3" class="dashboard hidden">
-      <h2>Seu Resultado</h2>
-
-      <div class="panel tri-panel">
-        <h3>Projeção TRI (Modelo Rasch 1PL)</h3>
-        <div class="tri-score" id="enare-score">---.- pontos</div>
-        <div id="tri-estimada">Nota TRI Estimada: --.--</div>
-      </div>
-
-      <div class="panel">
-        <h3>Desempenho por Cursinho</h3>
-        <div class="score-grid">
-          <div class="score-card">
-            <div>MedCof</div>
-            <div class="score-val" id="score-medcof">0/100</div>
+    <!-- Results Section (Step 2) -->
+    <div id="dashboard-section" class="dashboard-section hidden">
+      
+      <!-- Panel 1: Hero TRI Card -->
+      <div class="card-panel tri-hero">
+        <div class="tri-grid">
+          <div>
+            <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.05em;">
+              Projeção Oficial ENARE / Residência
+            </div>
+            <div class="tri-big-score" id="res-enare-score">---.-</div>
+            <div class="tri-sub-score">
+              Nota TRI ENAMED: <strong id="res-tri-score">--.--</strong> <span style="font-size: 0.9rem; color: var(--text-muted);">(θ = <span id="res-theta">-.---</span>)</span>
+            </div>
           </div>
-          <div class="score-card">
-            <div>Medway</div>
-            <div class="score-val" id="score-medway">0/100</div>
-          </div>
-          <div class="score-card">
-            <div>MedGrupo</div>
-            <div class="score-val" id="score-medgrupo">0/100</div>
-          </div>
-          <div class="score-card">
-            <div>Estratégia MED</div>
-            <div class="score-val" id="score-estrategia">0/100</div>
-          </div>
-          <div class="score-card nota-realista">
-            <div>Nota Realista (Média)</div>
-            <div class="score-val" id="score-media">0.0</div>
+          
+          <div class="tri-meta-list">
+            <div class="tri-meta-item">
+              <span class="tri-meta-label">Status INEP:</span>
+              <span class="tri-meta-val" id="res-proficiency">Calculando...</span>
+            </div>
+            <div class="tri-meta-item">
+              <span class="tri-meta-label">Percentil Nacional:</span>
+              <span class="tri-meta-val" id="res-percentile">Top --%</span>
+            </div>
+            <div class="tri-meta-item">
+              <span class="tri-meta-label">Média Ponderada Realista:</span>
+              <span class="tri-meta-val" id="res-realist-media">--.- / 100</span>
+            </div>
+            <div class="tri-meta-item">
+              <span class="tri-meta-label">Caderno Auditado:</span>
+              <span class="tri-meta-val" id="res-active-booklet">Caderno 1</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="panel">
-        <h3>Simulador de Especialidade (Bahia - ENARE 2026)</h3>
-        <select id="specialty-select" onchange="updateSimulador()">
-          <option value="">Selecione uma especialidade...</option>
-        </select>
-        
-        <div class="table-responsive">
-          <table id="simulador-table" class="hidden">
-            <thead>
-              <tr>
-                <th>Instituição</th>
-                <th>Corte 2026</th>
-                <th>Status</th>
-                <th>Faltam</th>
-              </tr>
-            </thead>
-            <tbody id="simulador-body"></tbody>
-          </table>
+      <!-- Panel 2: Prep Courses Comparison -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            🏛️ Desempenho por Cursinho Preparatório
+          </div>
+          <div style="font-size: 0.88rem; color: var(--text-secondary);">
+            Gabaritos pós-erratas consolidados
+          </div>
         </div>
-        <p style="margin-top: 15px; font-size: 0.85rem; color: var(--warning);">
-          ⚠️ Simulação baseada nas notas de corte do ENARE 2026 (1ª chamada). As notas podem variar a cada edição. Nas chamadas de reclassificação, os cortes tendem a recuar 30-60 pontos.
-        </p>
+
+        <div class="courses-grid">
+          <div class="course-card">
+            <div class="course-name">Medway</div>
+            <div class="course-score" id="score-medway">0</div>
+            <div class="course-extra">Gabarito técnico estrito</div>
+          </div>
+
+          <div class="course-card">
+            <div class="course-name">MedGrupo</div>
+            <div class="course-score" id="score-medgrupo">0</div>
+            <div class="course-extra">Gabarito clássico</div>
+          </div>
+
+          <div class="course-card">
+            <div class="course-name">MedCof</div>
+            <div class="course-score" id="score-medcof">0</div>
+            <div class="course-extra" id="score-medcof-annulled">0 c/ anulações</div>
+          </div>
+
+          <div class="course-card">
+            <div class="course-name">Estratégia MED</div>
+            <div class="course-score" id="score-estrategia">0</div>
+            <div class="course-extra">c/ recursos e asteriscos</div>
+          </div>
+
+          <div class="course-card highlight">
+            <div class="course-name">Nota Realista (Média)</div>
+            <div class="course-score" id="score-average">0.0</div>
+            <div class="course-extra">Consenso entre os cursos</div>
+          </div>
+        </div>
       </div>
 
-      <div class="panel">
-        <h3>Análise Questão a Questão</h3>
-        <div class="table-responsive">
+      <!-- Panel 3: Specialty & Bahia Vacancy Simulator -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            🏥 Simulador de Especialidade & Vagas (Bahia • ENARE 2026)
+          </div>
+          <div style="font-size: 0.88rem; color: var(--text-secondary);">
+            Cortes oficiais da 1ª chamada
+          </div>
+        </div>
+
+        <div class="simulator-controls">
+          <div>
+            <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">Especialidade Desejada</label>
+            <select id="spec-select" onchange="renderSimulatorTable()">
+              <option value="Cirurgia Geral">Cirurgia Geral</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">Filtro Regional</label>
+            <select id="region-filter" onchange="renderSimulatorTable()">
+              <option value="all">Todas as Cidades (Bahia)</option>
+              <option value="salvador">Apenas Salvador & RMS</option>
+              <option value="interior">Apenas Interior</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">Bonificação de 10%</label>
+            <button id="btn-toggle-bonus" class="toggle-bonus-btn" onclick="toggleBonus()">
+              <span id="bonus-indicator">⚪</span> Bônus PROVAB/PRMGFC
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container">
           <table>
             <thead>
               <tr>
-                <th>Q</th>
-                <th>Sua</th>
+                <th>Instituição</th>
+                <th>Município</th>
+                <th>Corte 2026</th>
+                <th>Sua Pontuação</th>
+                <th>Status Competitivo</th>
+                <th>Distância / Questões Faltantes</th>
+              </tr>
+            </thead>
+            <tbody id="sim-table-body"></tbody>
+          </table>
+        </div>
+
+        <p style="margin-top: 14px; font-size: 0.85rem; color: var(--warning); display: flex; align-items: center; gap: 8px;">
+          <span>⚠️</span> Simulação baseada nas notas de corte da 1ª chamada do ENARE 2026. Em Cirurgia Geral e outras especialidades de acesso direto, a lista costuma rodar com recuo de 30 a 60 pontos nas reclassificações.
+        </p>
+      </div>
+
+      <!-- Panel 4: Question-by-Question Audit Table -->
+      <div class="card-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            📑 Auditoria Detalhada Questão a Questão
+          </div>
+          <div class="filter-tabs">
+            <button class="filter-btn active" onclick="setAuditFilter('all')">Todas (100)</button>
+            <button class="filter-btn" onclick="setAuditFilter('correct')">✅ Acertos</button>
+            <button class="filter-btn" onclick="setAuditFilter('wrong')">❌ Erros</button>
+            <button class="filter-btn" onclick="setAuditFilter('disputed')">⚠️ Em Disputa (16)</button>
+            <button class="filter-btn" onclick="setAuditFilter('annulled')">🔴 Recursos / Anulações</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Questão</th>
+                <th>Sua Resposta</th>
                 <th>MedCof</th>
                 <th>Medway</th>
                 <th>Estratégia</th>
                 <th>MedGrupo</th>
                 <th>Status</th>
-                <th>Tag</th>
+                <th>Tipo</th>
               </tr>
             </thead>
-            <tbody id="analysis-body"></tbody>
+            <tbody id="audit-table-body"></tbody>
           </table>
         </div>
       </div>
-      
-      <div class="action-bar">
-         <button class="btn" style="background-color: var(--card-dark); border: 1px solid var(--border-color);" onclick="location.reload()">Refazer Simulação</button>
-      </div>
-    </main>
+
+    </div>
 
     <footer>
-      Simulação baseada em gabaritos extraoficiais de cursinhos preparatórios (MedCof, Medway, Estratégia MED, MedGrupo). Não constitui gabarito oficial do INEP. Notas de corte referentes ao ENARE 2026 (1ª chamada).
+      Simulador independente desenvolvido para candidatos do ENAMED 2026. Baseado em gabaritos extraoficiais consolidados de MedCof, Medway, Estratégia MED e MedGrupo. O Modelo de Rasch (1PL) é aplicado conforme a Nota Técnica INEP nº 42/2025. Não constitui resultado oficial do INEP.
     </footer>
   </div>
 
   <script>
-    const ANSWER_KEYS = [
-      {q:1,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:2,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:3,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:4,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:5,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:6,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:7,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:8,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:9,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:10,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:11,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:12,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:13,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:14,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:15,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:16,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:17,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:18,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:19,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:20,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:21,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:22,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:23,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:24,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:25,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:26,medcof:"X",medway:"D",estrategia:"D*",medgrupo:"D",consenso:null,divergente:true},
-      {q:27,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:28,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:29,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:30,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:31,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:32,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:33,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:34,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:35,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:36,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:37,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:38,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:39,medcof:"B",medway:"B",estrategia:"C",medgrupo:"B",consenso:null,divergente:true},
-      {q:40,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:41,medcof:"C",medway:"A",estrategia:"A/C*",medgrupo:"A",consenso:null,divergente:true},
-      {q:42,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:43,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:44,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:45,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:46,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:47,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:48,medcof:"A",medway:"A",estrategia:"D",medgrupo:"A",consenso:null,divergente:true},
-      {q:49,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:50,medcof:"B",medway:"B",estrategia:"B*",medgrupo:"B",consenso:"B",divergente:false},
-      {q:51,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:52,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:53,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:54,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:55,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:56,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:57,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:58,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:59,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:60,medcof:"X",medway:"B",estrategia:"*",medgrupo:"D",consenso:null,divergente:true},
-      {q:61,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:62,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:63,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:64,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:65,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:66,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:67,medcof:"A",medway:"A",estrategia:"C*",medgrupo:"A",consenso:null,divergente:true},
-      {q:68,medcof:"A",medway:"D",estrategia:"A",medgrupo:"A",consenso:null,divergente:true},
-      {q:69,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:70,medcof:"X",medway:"C",estrategia:"C*",medgrupo:"C",consenso:null,divergente:true},
-      {q:71,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:72,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:73,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:74,medcof:"A",medway:"A",estrategia:"D",medgrupo:"A",consenso:null,divergente:true},
-      {q:75,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:76,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:77,medcof:"A",medway:"A",estrategia:"C",medgrupo:"A",consenso:null,divergente:true},
-      {q:78,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:79,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:80,medcof:"X",medway:"C",estrategia:"B",medgrupo:"C",consenso:null,divergente:true},
-      {q:81,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:82,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:83,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:84,medcof:"X",medway:"D",estrategia:"D",medgrupo:"D",consenso:null,divergente:true},
-      {q:85,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:86,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:87,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:88,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:89,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:90,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:91,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:92,medcof:"C",medway:"C",estrategia:"C",medgrupo:"C",consenso:"C",divergente:false},
-      {q:93,medcof:"B",medway:"A",estrategia:"A",medgrupo:"A",consenso:null,divergente:true},
-      {q:94,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false},
-      {q:95,medcof:"C",medway:"C",estrategia:"C",medgrupo:"A",consenso:null,divergente:true},
-      {q:96,medcof:"A",medway:"A",estrategia:"A",medgrupo:"A",consenso:"A",divergente:false},
-      {q:97,medcof:"B",medway:"B",estrategia:"B",medgrupo:"B",consenso:"B",divergente:false},
-      {q:98,medcof:"A",medway:"A",estrategia:"A",medgrupo:"C",consenso:null,divergente:true},
-      {q:99,medcof:"D",medway:"D",estrategia:"D",medgrupo:"C",consenso:null,divergente:true},
-      {q:100,medcof:"D",medway:"D",estrategia:"D",medgrupo:"D",consenso:"D",divergente:false}
-    ];
+    
+const DATA_CADERNO_1 = [{"q":1,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":2,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":3,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":4,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":5,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":6,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":7,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":8,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":9,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":10,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":11,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":12,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":13,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":14,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":15,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":16,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":17,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":18,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":19,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":20,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":21,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":22,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":23,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":24,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":25,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":26,"medcof":"X","medway":"D","estrategia":"D*","medgrupo":"D","consenso":null,"divergente":true},{"q":27,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":28,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":29,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":30,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":31,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":32,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":33,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":34,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":35,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":36,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":37,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":38,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":39,"medcof":"B","medway":"B","estrategia":"C","medgrupo":"B","consenso":null,"divergente":true},{"q":40,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":41,"medcof":"C","medway":"A","estrategia":"A/C*","medgrupo":"A","consenso":null,"divergente":true},{"q":42,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":43,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":44,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":45,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":46,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":47,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":48,"medcof":"A","medway":"A","estrategia":"D","medgrupo":"A","consenso":null,"divergente":true},{"q":49,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":50,"medcof":"B","medway":"B","estrategia":"B*","medgrupo":"B","consenso":"B","divergente":false},{"q":51,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":52,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":53,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":54,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":55,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":56,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":57,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":58,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":59,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":60,"medcof":"X","medway":"B","estrategia":"*","medgrupo":"D","consenso":null,"divergente":true},{"q":61,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":62,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":63,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":64,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":65,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":66,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":67,"medcof":"A","medway":"A","estrategia":"C*","medgrupo":"A","consenso":null,"divergente":true},{"q":68,"medcof":"A","medway":"D","estrategia":"A","medgrupo":"A","consenso":null,"divergente":true},{"q":69,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":70,"medcof":"X","medway":"C","estrategia":"C*","medgrupo":"C","consenso":null,"divergente":true},{"q":71,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":72,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":73,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":74,"medcof":"A","medway":"A","estrategia":"D","medgrupo":"A","consenso":null,"divergente":true},{"q":75,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":76,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":77,"medcof":"A","medway":"A","estrategia":"C","medgrupo":"A","consenso":null,"divergente":true},{"q":78,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":79,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":80,"medcof":"X","medway":"C","estrategia":"B","medgrupo":"C","consenso":null,"divergente":true},{"q":81,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":82,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":83,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":84,"medcof":"X","medway":"D","estrategia":"D","medgrupo":"D","consenso":null,"divergente":true},{"q":85,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":86,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":87,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":88,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":89,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":90,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":91,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":92,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":93,"medcof":"B","medway":"A","estrategia":"A","medgrupo":"A","consenso":null,"divergente":true},{"q":94,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":95,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"A","consenso":null,"divergente":true},{"q":96,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":97,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":98,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"C","consenso":null,"divergente":true},{"q":99,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"C","consenso":null,"divergente":true},{"q":100,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false}];
+const DATA_CADERNO_2 = [{"q":1,"equiv_c1":46,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":2,"equiv_c1":47,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":3,"equiv_c1":48,"medcof":"A","medway":"A","estrategia":"D","medgrupo":"A","consenso":null,"divergente":true},{"q":4,"equiv_c1":49,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":5,"equiv_c1":50,"medcof":"B","medway":"B","estrategia":"B*","medgrupo":"B","consenso":"B","divergente":false},{"q":6,"equiv_c1":41,"medcof":"C","medway":"A","estrategia":"A/C*","medgrupo":"A","consenso":null,"divergente":true},{"q":7,"equiv_c1":42,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":8,"equiv_c1":43,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":9,"equiv_c1":44,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":10,"equiv_c1":45,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":11,"equiv_c1":36,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":12,"equiv_c1":37,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":13,"equiv_c1":38,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":14,"equiv_c1":39,"medcof":"B","medway":"B","estrategia":"C","medgrupo":"B","consenso":null,"divergente":true},{"q":15,"equiv_c1":40,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":16,"equiv_c1":15,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":17,"equiv_c1":16,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":18,"equiv_c1":17,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":19,"equiv_c1":18,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":20,"equiv_c1":19,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":21,"equiv_c1":20,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":22,"equiv_c1":21,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":23,"equiv_c1":8,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":24,"equiv_c1":9,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":25,"equiv_c1":10,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":26,"equiv_c1":11,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":27,"equiv_c1":12,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":28,"equiv_c1":13,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":29,"equiv_c1":14,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":30,"equiv_c1":1,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":31,"equiv_c1":2,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":32,"equiv_c1":3,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":33,"equiv_c1":4,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":34,"equiv_c1":5,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":35,"equiv_c1":6,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":36,"equiv_c1":7,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":37,"equiv_c1":29,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":38,"equiv_c1":30,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":39,"equiv_c1":31,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":40,"equiv_c1":32,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":41,"equiv_c1":33,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":42,"equiv_c1":34,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":43,"equiv_c1":25,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":44,"equiv_c1":22,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":45,"equiv_c1":23,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":46,"equiv_c1":24,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":47,"equiv_c1":35,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":48,"equiv_c1":26,"medcof":"X","medway":"D","estrategia":"D*","medgrupo":"D","consenso":null,"divergente":true},{"q":49,"equiv_c1":27,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":50,"equiv_c1":28,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":51,"equiv_c1":96,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":52,"equiv_c1":97,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":53,"equiv_c1":95,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"A","consenso":null,"divergente":true},{"q":54,"equiv_c1":99,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"C","consenso":null,"divergente":true},{"q":55,"equiv_c1":100,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":56,"equiv_c1":91,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":57,"equiv_c1":92,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":58,"equiv_c1":93,"medcof":"B","medway":"A","estrategia":"A","medgrupo":"A","consenso":null,"divergente":true},{"q":59,"equiv_c1":94,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":60,"equiv_c1":98,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"C","consenso":null,"divergente":true},{"q":61,"equiv_c1":86,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":62,"equiv_c1":87,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":63,"equiv_c1":88,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":64,"equiv_c1":89,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":65,"equiv_c1":90,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":66,"equiv_c1":65,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":67,"equiv_c1":66,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":68,"equiv_c1":67,"medcof":"A","medway":"A","estrategia":"C*","medgrupo":"A","consenso":null,"divergente":true},{"q":69,"equiv_c1":68,"medcof":"A","medway":"D","estrategia":"A","medgrupo":"A","consenso":null,"divergente":true},{"q":70,"equiv_c1":69,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":71,"equiv_c1":70,"medcof":"X","medway":"C","estrategia":"C*","medgrupo":"C","consenso":null,"divergente":true},{"q":72,"equiv_c1":71,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":73,"equiv_c1":58,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":74,"equiv_c1":59,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":75,"equiv_c1":60,"medcof":"X","medway":"B","estrategia":"*","medgrupo":"D","consenso":null,"divergente":true},{"q":76,"equiv_c1":61,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":77,"equiv_c1":62,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":78,"equiv_c1":63,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":79,"equiv_c1":64,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":80,"equiv_c1":51,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":81,"equiv_c1":52,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":82,"equiv_c1":53,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":83,"equiv_c1":54,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":84,"equiv_c1":55,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":85,"equiv_c1":56,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":86,"equiv_c1":57,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":87,"equiv_c1":79,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false},{"q":88,"equiv_c1":80,"medcof":"X","medway":"C","estrategia":"B","medgrupo":"C","consenso":null,"divergente":true},{"q":89,"equiv_c1":81,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":90,"equiv_c1":82,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":91,"equiv_c1":83,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":92,"equiv_c1":84,"medcof":"X","medway":"D","estrategia":"D","medgrupo":"D","consenso":null,"divergente":true},{"q":93,"equiv_c1":85,"medcof":"C","medway":"C","estrategia":"C","medgrupo":"C","consenso":"C","divergente":false},{"q":94,"equiv_c1":72,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":95,"equiv_c1":73,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":96,"equiv_c1":74,"medcof":"A","medway":"A","estrategia":"D","medgrupo":"A","consenso":null,"divergente":true},{"q":97,"equiv_c1":75,"medcof":"D","medway":"D","estrategia":"D","medgrupo":"D","consenso":"D","divergente":false},{"q":98,"equiv_c1":76,"medcof":"B","medway":"B","estrategia":"B","medgrupo":"B","consenso":"B","divergente":false},{"q":99,"equiv_c1":77,"medcof":"A","medway":"A","estrategia":"C","medgrupo":"A","consenso":null,"divergente":true},{"q":100,"equiv_c1":78,"medcof":"A","medway":"A","estrategia":"A","medgrupo":"A","consenso":"A","divergente":false}];
+const EQUIV_MAP = {"c1_to_c2":{"1":30,"2":31,"3":32,"4":33,"5":34,"6":35,"7":36,"8":23,"9":24,"10":25,"11":26,"12":27,"13":28,"14":29,"15":16,"16":17,"17":18,"18":19,"19":20,"20":21,"21":22,"22":44,"23":45,"24":46,"25":43,"26":48,"27":49,"28":50,"29":37,"30":38,"31":39,"32":40,"33":41,"34":42,"35":47,"36":11,"37":12,"38":13,"39":14,"40":15,"41":6,"42":7,"43":8,"44":9,"45":10,"46":1,"47":2,"48":3,"49":4,"50":5,"51":80,"52":81,"53":82,"54":83,"55":84,"56":85,"57":86,"58":73,"59":74,"60":75,"61":76,"62":77,"63":78,"64":79,"65":66,"66":67,"67":68,"68":69,"69":70,"70":71,"71":72,"72":94,"73":95,"74":96,"75":97,"76":98,"77":99,"78":100,"79":87,"80":88,"81":89,"82":90,"83":91,"84":92,"85":93,"86":61,"87":62,"88":63,"89":64,"90":65,"91":56,"92":57,"93":58,"94":59,"95":53,"96":51,"97":52,"98":60,"99":54,"100":55},"c2_to_c1":{"1":46,"2":47,"3":48,"4":49,"5":50,"6":41,"7":42,"8":43,"9":44,"10":45,"11":36,"12":37,"13":38,"14":39,"15":40,"16":15,"17":16,"18":17,"19":18,"20":19,"21":20,"22":21,"23":8,"24":9,"25":10,"26":11,"27":12,"28":13,"29":14,"30":1,"31":2,"32":3,"33":4,"34":5,"35":6,"36":7,"37":29,"38":30,"39":31,"40":32,"41":33,"42":34,"43":25,"44":22,"45":23,"46":24,"47":35,"48":26,"49":27,"50":28,"51":96,"52":97,"53":95,"54":99,"55":100,"56":91,"57":92,"58":93,"59":94,"60":98,"61":86,"62":87,"63":88,"64":89,"65":90,"66":65,"67":66,"68":67,"69":68,"70":69,"71":70,"72":71,"73":58,"74":59,"75":60,"76":61,"77":62,"78":63,"79":64,"80":51,"81":52,"82":53,"83":54,"84":55,"85":56,"86":57,"87":79,"88":80,"89":81,"90":82,"91":83,"92":84,"93":85,"94":72,"95":73,"96":74,"97":75,"98":76,"99":77,"100":78}};
+const RESOURCE_NOTES_C1 = {"1":"CRB-65 >= 2 em idoso de ILPI: indicação de internação/UPA, não TC ambulatorial.","4":"Laparoscopia é padrão-ouro; diretriz formal não deve ser evitada por invasividade.","7":"Sofrimento adaptativo leve em adolescente: acolhimento UBS + eMulti, sem ISRS.","26":"RECURSO: Protocolo PrEP contínua; divergência teórica e falha de redação.","39":"RECURSO: Redação dúbia de vigilância epidemiológica; MedCof/Medway/MedGrupo deram B, Estratégia C.","41":"FORTE RECURSO: Choque anafilático refratário; MedCof sustenta adrenalina EV contínua (C).","48":"RECURSO: 3 cursinhos dão A; apenas Estratégia deu D.","50":"Rastreio CCR: histórico familiar jovem = aos 40 anos ou 10 anos antes do diagnóstico.","58":"PBE / Ascite cirrótica: Paracentese diagnóstica é etapa inegociável antes de conduta definitiva.","60":"ANULAÇÃO IMINENTE: 4 cursinhos deram 4 gabaritos diferentes (MedCof X, Medway B, Estratégia *, MedGrupo D).","62":"Indicadores oficiais da APS monitoram sorologias (sífilis/HIV) e consultas, não USG.","67":"FORTE RECURSO: Trauma pélvico instável; disputa entre fixação externa e packing pré-peritoneal (C vs A).","68":"RECURSO: MedCof, Estratégia e MedGrupo unânimes em A; apenas Medway divergiu.","69":"Violência contra mulher lúcida: Notificação SINAN compulsória, mas sem denúncia policial sem consentimento.","70":"FORTE RECURSO: MedCof pede anulação; Medway, Estratégia e MedGrupo dão C.","74":"RECURSO: 3 cursinhos dão A; Estratégia divergiu para D.","77":"RECURSO: 3 cursinhos dão A; Estratégia divergiu para C.","80":"FORTE RECURSO: MedCof pede anulação; Medway e MedGrupo dão C.","84":"FORTE RECURSO: MedCof pede anulação; 3 cursinhos dão D.","93":"RECURSO: 3 cursinhos dão A; MedCof deu B.","95":"RECURSO: MedCof, Medway e Estratégia dão C (intervenção breve); MedGrupo deu A.","98":"RECURSO: MedCof, Medway e Estratégia dão A (cirurgia eletiva); MedGrupo deu C.","99":"FORTE DISPUTA: Investigação de tipagem do parceiro na aloimunização Rh (MedGrupo C vs outros D).","100":"Onda de calor / Exaustão térmica: resfriamento e reposição na UBS + busca ativa; não há notificação individual."};
+const RESOURCE_NOTES_C2 = {"3":"(Equiv. Q48 Cad. 1): RECURSO: 3 cursinhos dão A; apenas Estratégia deu D.","5":"(Equiv. Q50 Cad. 1): Rastreio CCR: histórico familiar jovem = aos 40 anos ou 10 anos antes do diagnóstico.","6":"(Equiv. Q41 Cad. 1): FORTE RECURSO: Choque anafilático refratário; MedCof sustenta adrenalina EV contínua (C).","14":"(Equiv. Q39 Cad. 1): RECURSO: Redação dúbia de vigilância epidemiológica; MedCof/Medway/MedGrupo deram B, Estratégia C.","30":"(Equiv. Q1 Cad. 1): CRB-65 >= 2 em idoso de ILPI: indicação de internação/UPA, não TC ambulatorial.","33":"(Equiv. Q4 Cad. 1): Laparoscopia é padrão-ouro; diretriz formal não deve ser evitada por invasividade.","36":"(Equiv. Q7 Cad. 1): Sofrimento adaptativo leve em adolescente: acolhimento UBS + eMulti, sem ISRS.","48":"(Equiv. Q26 Cad. 1): RECURSO: Protocolo PrEP contínua; divergência teórica e falha de redação.","53":"(Equiv. Q95 Cad. 1): RECURSO: MedCof, Medway e Estratégia dão C (intervenção breve); MedGrupo deu A.","54":"(Equiv. Q99 Cad. 1): FORTE DISPUTA: Investigação de tipagem do parceiro na aloimunização Rh (MedGrupo C vs outros D).","55":"(Equiv. Q100 Cad. 1): Onda de calor / Exaustão térmica: resfriamento e reposição na UBS + busca ativa; não há notificação individual.","58":"(Equiv. Q93 Cad. 1): RECURSO: 3 cursinhos dão A; MedCof deu B.","60":"(Equiv. Q98 Cad. 1): RECURSO: MedCof, Medway e Estratégia dão A (cirurgia eletiva); MedGrupo deu C.","68":"(Equiv. Q67 Cad. 1): FORTE RECURSO: Trauma pélvico instável; disputa entre fixação externa e packing pré-peritoneal (C vs A).","69":"(Equiv. Q68 Cad. 1): RECURSO: MedCof, Estratégia e MedGrupo unânimes em A; apenas Medway divergiu.","70":"(Equiv. Q69 Cad. 1): Violência contra mulher lúcida: Notificação SINAN compulsória, mas sem denúncia policial sem consentimento.","71":"(Equiv. Q70 Cad. 1): FORTE RECURSO: MedCof pede anulação; Medway, Estratégia e MedGrupo dão C.","73":"(Equiv. Q58 Cad. 1): PBE / Ascite cirrótica: Paracentese diagnóstica é etapa inegociável antes de conduta definitiva.","75":"(Equiv. Q60 Cad. 1): ANULAÇÃO IMINENTE: 4 cursinhos deram 4 gabaritos diferentes (MedCof X, Medway B, Estratégia *, MedGrupo D).","77":"(Equiv. Q62 Cad. 1): Indicadores oficiais da APS monitoram sorologias (sífilis/HIV) e consultas, não USG.","88":"(Equiv. Q80 Cad. 1): FORTE RECURSO: MedCof pede anulação; Medway e MedGrupo dão C.","92":"(Equiv. Q84 Cad. 1): FORTE RECURSO: MedCof pede anulação; 3 cursinhos dão D.","96":"(Equiv. Q74 Cad. 1): RECURSO: 3 cursinhos dão A; Estratégia divergiu para D.","99":"(Equiv. Q77 Cad. 1): RECURSO: 3 cursinhos dão A; Estratégia divergiu para C."};
+const CUTOFFS_DATA = {"Anestesiologia":[{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":924},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":910},{"inst":"Hospital Estadual Costa das Baleias","cidade":"Teixeira de Freitas","corte":910},{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":902},{"inst":"Hospital do Subúrbio / Prodal Saúde","cidade":"Salvador","corte":900},{"inst":"Complexo Hospitalar de Vitória da Conquista","cidade":"Vitória da Conquista","corte":890},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":890},{"inst":"Hospital do Oeste (Barreiras)","cidade":"Barreiras","corte":860}],"Cirurgia Cardiovascular":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":880}],"Cirurgia Geral":[{"inst":"Hospital Geral Ernesto Simões Filho","cidade":"Salvador","corte":920},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":860},{"inst":"Instituto de Ensino e Saúde S/A","cidade":"Salvador / RMS","corte":860},{"inst":"Hospital do Subúrbio / Prodal Saúde","cidade":"Salvador","corte":850},{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":850},{"inst":"Hospital Regional Costa do Cacau (Ilhéus)","cidade":"Ilhéus","corte":850},{"inst":"Complexo Hospitalar de Vitória da Conquista","cidade":"Vitória da Conquista","corte":840},{"inst":"Hospital Ana Nery","cidade":"Salvador","corte":840},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":830},{"inst":"Hospital do Oeste (Barreiras)","cidade":"Barreiras","corte":830},{"inst":"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)","cidade":"Irecê","corte":830},{"inst":"Hospital Metropolitano – SA (Lauro de Freitas)","cidade":"Lauro de Freitas / RMS","corte":820},{"inst":"Hospital Estadual Costa das Baleias","cidade":"Teixeira de Freitas","corte":820},{"inst":"Hospital Regional de Santo Antônio de Jesus","cidade":"Santo Antônio de Jesus","corte":820},{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":810}],"Clínica Médica":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":860},{"inst":"Complexo Hospitalar de Vitória da Conquista","cidade":"Vitória da Conquista","corte":840},{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":830},{"inst":"Hospital Geral Ernesto Simões Filho","cidade":"Salvador","corte":820},{"inst":"Hospital Estadual Costa das Baleias","cidade":"Teixeira de Freitas","corte":810},{"inst":"Hospital Geral de Guanambi","cidade":"Guanambi","corte":810},{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":810},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":800},{"inst":"Hospital do Oeste (Barreiras)","cidade":"Barreiras","corte":800},{"inst":"Hospital do Subúrbio / Prodal Saúde","cidade":"Salvador","corte":790},{"inst":"Hospital Regional Costa do Cacau (Ilhéus)","cidade":"Ilhéus","corte":790},{"inst":"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)","cidade":"Irecê","corte":790},{"inst":"Instituto de Ensino e Saúde S/A","cidade":"Salvador / RMS","corte":790},{"inst":"Hospital Ana Nery","cidade":"Salvador","corte":780},{"inst":"Hospital Regional de Santo Antônio de Jesus","cidade":"Santo Antônio de Jesus","corte":780}],"Dermatologia":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":910}],"Genética Médica":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":750}],"Ginecologia e Obstetrícia":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":902},{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":870},{"inst":"Instituto de Perinatologia da Bahia (IPERBA)","cidade":"Salvador","corte":860},{"inst":"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)","cidade":"Irecê","corte":850},{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":840},{"inst":"Fundação Municipal de Saúde de Juazeiro","cidade":"Juazeiro","corte":825}],"Infectologia":[{"inst":"Instituto Couto Maia","cidade":"Salvador","corte":760},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":710}],"Medicina de Emergência":[{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":740},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":600}],"Medicina de Família e Comunidade":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":810},{"inst":"Fundação Estatal de Saúde da Família – SMS Salvador","cidade":"Salvador","corte":760},{"inst":"Fundação Municipal de Saúde de Juazeiro","cidade":"Juazeiro","corte":760},{"inst":"Instituto de Ensino e Saúde S/A","cidade":"Salvador / RMS","corte":730}],"Medicina do Trabalho":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":800}],"Medicina Física e Reabilitação":[{"inst":"Centro Estadual de Prevenção e Reabilitação (CEPRED)","cidade":"Salvador","corte":780},{"inst":"Hospital Ortopédico do Estado da Bahia (HOEB)","cidade":"Salvador","corte":730}],"Medicina Intensiva":[{"inst":"Complexo Hospitalar de Vitória da Conquista","cidade":"Vitória da Conquista","corte":847},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":830},{"inst":"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)","cidade":"Irecê","corte":810},{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":760},{"inst":"Hospital Regional Costa do Cacau (Ilhéus)","cidade":"Ilhéus","corte":750},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":730},{"inst":"Hospital Geral Ernesto Simões Filho","cidade":"Salvador","corte":720},{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":700},{"inst":"Hospital Metropolitano – SA (Lauro de Freitas)","cidade":"Lauro de Freitas / RMS","corte":690}],"Neurocirurgia":[{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":900},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":891}],"Neurologia":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":910},{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":900},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":891},{"inst":"Hospital Regional de Santo Antônio de Jesus","cidade":"Santo Antônio de Jesus","corte":860}],"Oftalmologia":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":946}],"Ortopedia e Traumatologia":[{"inst":"Hospital Ortopédico do Estado da Bahia (HOEB)","cidade":"Salvador","corte":890},{"inst":"Hospital do Oeste (Barreiras)","cidade":"Barreiras","corte":840},{"inst":"Hospital do Subúrbio / Prodal Saúde","cidade":"Salvador","corte":830},{"inst":"Fundação Municipal de Saúde de Juazeiro","cidade":"Juazeiro","corte":810},{"inst":"Hospital Geral Ernesto Simões Filho","cidade":"Salvador","corte":780},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":770},{"inst":"Hospital Geral Clériston Andrade (Feira de Santana)","cidade":"Feira de Santana","corte":770},{"inst":"Hospital Regional de Santo Antônio de Jesus","cidade":"Santo Antônio de Jesus","corte":760},{"inst":"Hospital Metropolitano – SA (Lauro de Freitas)","cidade":"Lauro de Freitas / RMS","corte":750},{"inst":"Hospital Estadual Costa das Baleias","cidade":"Teixeira de Freitas","corte":740},{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":730}],"Otorrinolaringologia":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":920}],"Patologia":[{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":836}],"Pediatria":[{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":810},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":800},{"inst":"Hospital do Subúrbio / Prodal Saúde","cidade":"Salvador","corte":760},{"inst":"Hospital Geral de Guanambi","cidade":"Guanambi","corte":760},{"inst":"Instituto de Ensino e Saúde S/A","cidade":"Salvador / RMS","corte":750},{"inst":"Hospital do Oeste (Barreiras)","cidade":"Barreiras","corte":740},{"inst":"Complexo Hospitalar de Vitória da Conquista","cidade":"Vitória da Conquista","corte":730},{"inst":"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)","cidade":"Irecê","corte":730}],"Psiquiatria":[{"inst":"Hospital Juliano Moreira","cidade":"Salvador","corte":900},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":900},{"inst":"Complexo Hospitalar de Vitória da Conquista","cidade":"Vitória da Conquista","corte":880}],"Radiologia e Diagnóstico por Imagem":[{"inst":"Hospital Geral Roberto Santos (HGRS)","cidade":"Salvador","corte":890},{"inst":"Universidade Federal da Bahia (UFBA)","cidade":"Salvador","corte":880},{"inst":"Hospital Regional de Juazeiro","cidade":"Juazeiro","corte":880}]};
+const SAMPLE_ANSWERS_C1 = {"1":"D","2":"C","3":"C","4":"B","5":"A","6":"D","7":"B","8":"C","9":"A","10":"C","11":"A","12":"A","13":"B","14":"D","15":"C","16":"D","17":"A","18":"A","19":"C","20":"A","21":"D","22":"C","23":"A","24":"B","25":"A","26":"D","27":"C","28":"B","29":"C","30":"A","31":"B","32":"C","33":"B","34":"B","35":"A","36":"D","37":"A","38":"A","39":"B","40":"A","41":"C","42":"B","43":"D","44":"C","45":"D","46":"B","47":"C","48":"A","49":"C","50":"A","51":"A","52":"B","53":"A","54":"D","55":"A","56":"A","57":"B","58":"C","59":"A","60":"C","61":"B","62":"A","63":"B","64":"C","65":"B","66":"C","67":"C","68":"A","69":"D","70":"C","71":"C","72":"B","73":"B","74":"A","75":"D","76":"A","77":"A","78":"A","79":"A","80":"C","81":"B","82":"C","83":"C","84":"D","85":"C","86":"D","87":"A","88":"B","89":"C","90":"C","91":"D","92":"C","93":"A","94":"D","95":"C","96":"A","97":"D","98":"A","99":"C","100":"B"};
 
-    const CUTOFFS = {
-      "Anestesiologia": [
-        {inst:"Hospital Regional de Juazeiro",corte:924},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:910},
-        {inst:"Hospital Estadual Costa das Baleias",corte:910},
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:902},
-        {inst:"Hospital do Subúrbio / Prodal Saúde",corte:900},
-        {inst:"Complexo Hospitalar de Vitória da Conquista",corte:890},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:890},
-        {inst:"Hospital do Oeste (Barreiras)",corte:860}
-      ],
-      "Cirurgia Cardiovascular": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:880}
-      ],
-      "Cirurgia Geral": [
-        {inst:"Hospital Geral Ernesto Simões Filho",corte:920},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:860},
-        {inst:"Instituto de Ensino e Saúde S/A",corte:860},
-        {inst:"Hospital do Subúrbio / Prodal Saúde",corte:850},
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:850},
-        {inst:"Hospital Regional Costa do Cacau (Ilhéus)",corte:850},
-        {inst:"Complexo Hospitalar de Vitória da Conquista",corte:840},
-        {inst:"Hospital Ana Nery",corte:840},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:830},
-        {inst:"Hospital do Oeste (Barreiras)",corte:830},
-        {inst:"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)",corte:830},
-        {inst:"Hospital Metropolitano – SA (Lauro de Freitas)",corte:820},
-        {inst:"Hospital Estadual Costa das Baleias",corte:820},
-        {inst:"Hospital Regional de Santo Antônio de Jesus",corte:820},
-        {inst:"Hospital Regional de Juazeiro",corte:810}
-      ],
-      "Clínica Médica": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:860},
-        {inst:"Complexo Hospitalar de Vitória da Conquista",corte:840},
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:830},
-        {inst:"Hospital Geral Ernesto Simões Filho",corte:820},
-        {inst:"Hospital Estadual Costa das Baleias",corte:810},
-        {inst:"Hospital Geral de Guanambi",corte:810},
-        {inst:"Hospital Regional de Juazeiro",corte:810},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:800},
-        {inst:"Hospital do Oeste (Barreiras)",corte:800},
-        {inst:"Hospital do Subúrbio / Prodal Saúde",corte:790},
-        {inst:"Hospital Regional Costa do Cacau (Ilhéus)",corte:790},
-        {inst:"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)",corte:790},
-        {inst:"Instituto de Ensino e Saúde S/A",corte:790},
-        {inst:"Hospital Ana Nery",corte:780},
-        {inst:"Hospital Regional de Santo Antônio de Jesus",corte:780}
-      ],
-      "Dermatologia": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:910}
-      ],
-      "Genética Médica": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:750}
-      ],
-      "Ginecologia e Obstetrícia": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:902},
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:870},
-        {inst:"Instituto de Perinatologia da Bahia (IPERBA)",corte:860},
-        {inst:"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)",corte:850},
-        {inst:"Hospital Regional de Juazeiro",corte:840},
-        {inst:"Fundação Municipal de Saúde de Juazeiro",corte:825}
-      ],
-      "Infectologia": [
-        {inst:"Instituto Couto Maia",corte:760},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:710}
-      ],
-      "Medicina de Emergência": [
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:740},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:600}
-      ],
-      "Medicina de Família e Comunidade": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:810},
-        {inst:"Fundação Estatal de Saúde da Família – SMS Salvador",corte:760},
-        {inst:"Fundação Municipal de Saúde de Juazeiro",corte:760},
-        {inst:"Instituto de Ensino e Saúde S/A",corte:730}
-      ],
-      "Medicina do Trabalho": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:800}
-      ],
-      "Medicina Física e Reabilitação": [
-        {inst:"Centro Estadual de Prevenção e Reabilitação (CEPRED)",corte:780},
-        {inst:"Hospital Ortopédico do Estado da Bahia (HOEB)",corte:730}
-      ],
-      "Medicina Intensiva": [
-        {inst:"Complexo Hospitalar de Vitória da Conquista",corte:847},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:830},
-        {inst:"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)",corte:810},
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:760},
-        {inst:"Hospital Regional Costa do Cacau (Ilhéus)",corte:750},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:730},
-        {inst:"Hospital Geral Ernesto Simões Filho",corte:720},
-        {inst:"Hospital Regional de Juazeiro",corte:700},
-        {inst:"Hospital Metropolitano – SA (Lauro de Freitas)",corte:690}
-      ],
-      "Neurocirurgia": [
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:900},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:891}
-      ],
-      "Neurologia": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:910},
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:900},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:891},
-        {inst:"Hospital Regional de Santo Antônio de Jesus",corte:860}
-      ],
-      "Oftalmologia": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:946}
-      ],
-      "Ortopedia e Traumatologia": [
-        {inst:"Hospital Ortopédico do Estado da Bahia (HOEB)",corte:890},
-        {inst:"Hospital do Oeste (Barreiras)",corte:840},
-        {inst:"Hospital do Subúrbio / Prodal Saúde",corte:830},
-        {inst:"Fundação Municipal de Saúde de Juazeiro",corte:810},
-        {inst:"Hospital Geral Ernesto Simões Filho",corte:780},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:770},
-        {inst:"Hospital Geral Clériston Andrade (Feira de Santana)",corte:770},
-        {inst:"Hospital Regional de Santo Antônio de Jesus",corte:760},
-        {inst:"Hospital Metropolitano – SA (Lauro de Freitas)",corte:750},
-        {inst:"Hospital Estadual Costa das Baleias",corte:740},
-        {inst:"Hospital Regional de Juazeiro",corte:730}
-      ],
-      "Otorrinolaringologia": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:920}
-      ],
-      "Patologia": [
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:836}
-      ],
-      "Pediatria": [
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:810},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:800},
-        {inst:"Hospital do Subúrbio / Prodal Saúde",corte:760},
-        {inst:"Hospital Geral de Guanambi",corte:760},
-        {inst:"Instituto de Ensino e Saúde S/A",corte:750},
-        {inst:"Hospital do Oeste (Barreiras)",corte:740},
-        {inst:"Complexo Hospitalar de Vitória da Conquista",corte:730},
-        {inst:"Hospital Regional Dr. Mário Dourado Sobrinho (Irecê)",corte:730}
-      ],
-      "Psiquiatria": [
-        {inst:"Hospital Juliano Moreira",corte:900},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:900},
-        {inst:"Complexo Hospitalar de Vitória da Conquista",corte:880}
-      ],
-      "Radiologia e Diagnóstico por Imagem": [
-        {inst:"Hospital Geral Roberto Santos (HGRS)",corte:890},
-        {inst:"Universidade Federal da Bahia (UFBA)",corte:880},
-        {inst:"Hospital Regional de Juazeiro",corte:880}
-      ]
+
+    // App state
+    let currentBooklet = 1; // 1 or 2
+    let answersC1 = {};
+    let answersC2 = {};
+    let hasBonus = false;
+    let currentAuditFilter = 'all';
+
+    let lastCalculated = {
+      rawMedia: 0,
+      tri: { theta: 0, notaTRI: 0, enareScore: 0 }
     };
 
-    let userAnswers = {};
-    let globalEnareScore = 0;
-    let globalRealistMedia = 0;
+    function init() {
+      renderQuestions();
+      populateSpecialties();
+    }
 
-    function selectCaderno(num) {
-      if (num === 2) {
-        document.getElementById("caderno2-msg").classList.remove("hidden");
-      } else {
-        document.getElementById("step1").classList.add("hidden");
-        document.getElementById("step2").classList.remove("hidden");
-        renderQuestions();
-      }
+    function switchBooklet(num) {
+      currentBooklet = num;
+      document.getElementById('tab-c1').classList.toggle('active', num === 1);
+      document.getElementById('tab-c2').classList.toggle('active', num === 2);
+      renderQuestions();
+      updateProgress();
+    }
+
+    function getCurrentKeys() {
+      return currentBooklet === 1 ? DATA_CADERNO_1 : DATA_CADERNO_2;
+    }
+
+    function getCurrentAnswers() {
+      return currentBooklet === 1 ? answersC1 : answersC2;
     }
 
     function renderQuestions() {
-      const container = document.getElementById("questions-container");
-      container.innerHTML = "";
-      
-      ANSWER_KEYS.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "question-card";
+      const container = document.getElementById('questions-grid');
+      container.innerHTML = '';
+      const keys = getCurrentKeys();
+      const userAns = getCurrentAnswers();
+
+      keys.forEach(item => {
+        const qNum = item.q;
+        const selected = userAns[qNum] || '';
         
-        let dotClass = item.divergente ? "divergente" : "consenso";
+        let dotClass = 'consenso';
+        let dotTitle = 'Consenso unânime dos 4 cursinhos';
         
-        div.innerHTML = `
-          <div class="q-header">
-            <span>Questão ${item.q}</span>
-            <span class="dot ${dotClass}" title="${item.divergente ? 'Divergente' : 'Consenso'}"></span>
+        const isAnulacao = item.medcof === 'X' || String(item.estrategia).includes('*') || String(item.estrategia) === 'X';
+        if (isAnulacao) {
+          dotClass = 'recurso';
+          dotTitle = 'Questão com recurso forte / pedido de anulação';
+        } else if (item.divergente) {
+          dotClass = 'divergente';
+          dotTitle = 'Divergência entre os cursinhos';
+        }
+
+        const equivText = currentBooklet === 2 ? `≡ Q${item.equiv_c1} (C1)` : `≡ Q${EQUIV_MAP.c1_to_c2[qNum]} (C2)`;
+
+        const card = document.createElement('div');
+        card.className = 'question-card' + (selected ? ' answered' : '');
+        card.id = `q-card-${qNum}`;
+
+        card.innerHTML = `
+          <div class="q-card-header">
+            <span class="q-number">Questão ${qNum}</span>
+            <span class="q-equiv-badge">${equivText}</span>
+            <span class="dot ${dotClass}" title="${dotTitle}"></span>
           </div>
-          <div class="options">
-            <button class="opt-btn" onclick="selectAnswer(${item.q}, 'A', this)">A</button>
-            <button class="opt-btn" onclick="selectAnswer(${item.q}, 'B', this)">B</button>
-            <button class="opt-btn" onclick="selectAnswer(${item.q}, 'C', this)">C</button>
-            <button class="opt-btn" onclick="selectAnswer(${item.q}, 'D', this)">D</button>
+          <div class="q-options">
+            ${['A', 'B', 'C', 'D'].map(opt => `
+              <button 
+                type="button" 
+                class="btn-opt ${selected === opt ? 'selected' : ''}" 
+                onclick="setAnswer(${qNum}, '${opt}', this)"
+              >${opt}</button>
+            `).join('')}
           </div>
         `;
-        container.appendChild(div);
-      });
-      
-      // Populate specialties
-      const select = document.getElementById("specialty-select");
-      Object.keys(CUTOFFS).sort().forEach(spec => {
-        const opt = document.createElement("option");
-        opt.value = spec;
-        opt.textContent = spec;
-        select.appendChild(opt);
+        container.appendChild(card);
       });
     }
 
-    function selectAnswer(q, ans, btn) {
-      userAnswers[q] = ans;
+    function setAnswer(qNum, opt, btn) {
+      const answers = getCurrentAnswers();
+      if (answers[qNum] === opt) {
+        delete answers[qNum];
+      } else {
+        answers[qNum] = opt;
+      }
       
-      const parent = btn.parentElement;
-      const buttons = parent.querySelectorAll('.opt-btn');
-      buttons.forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      
+      // Also synchronize with other booklet automatically!
+      if (currentBooklet === 1) {
+        const q2 = EQUIV_MAP.c1_to_c2[qNum];
+        if (q2) {
+          if (answers[qNum]) answersC2[q2] = answers[qNum];
+          else delete answersC2[q2];
+        }
+      } else {
+        const q1 = EQUIV_MAP.c2_to_c1[qNum];
+        if (q1) {
+          if (answers[qNum]) answersC1[q1] = answers[qNum];
+          else delete answersC1[q1];
+        }
+      }
+
+      // Update card UI
+      const card = document.getElementById(`q-card-${qNum}`);
+      if (card) {
+        card.classList.toggle('answered', !!answers[qNum]);
+        card.querySelectorAll('.btn-opt').forEach(b => {
+          b.classList.toggle('selected', b.textContent.trim() === (answers[qNum] || ''));
+        });
+      }
+
       updateProgress();
     }
 
     function updateProgress() {
-      const answered = Object.keys(userAnswers).length;
-      document.getElementById("progress-text").textContent = `${answered}/100 questões respondidas`;
+      const answers = getCurrentAnswers();
+      const count = Object.keys(answers).length;
+      const pct = Math.round((count / 100) * 100);
+
+      document.getElementById('progress-text').textContent = `${count}/100 respondidas (${pct}%)`;
+      document.getElementById('progress-bar').style.width = `${pct}%`;
+      document.getElementById('float-answered-count').textContent = count;
+      document.getElementById('float-percentage').textContent = `${pct}%`;
     }
 
-    function isMatch(userAns, key) {
-      if (!key) return false;
-      if (key === "X" || key === "*" || key.includes("*")) return true; // Treat annulled/undefined as match for the user
-      
-      // For cases like "A/C" in estrategia
-      if (key.includes("/")) {
-        const parts = key.replace("*", "").split("/");
-        return parts.includes(userAns);
+    function loadSampleAnswers() {
+      if (currentBooklet === 1) {
+        answersC1 = { ...SAMPLE_ANSWERS_C1 };
+        answersC2 = {};
+        for (const [q1, ans] of Object.entries(answersC1)) {
+          const q2 = EQUIV_MAP.c1_to_c2[q1];
+          if (q2) answersC2[q2] = ans;
+        }
+      } else {
+        answersC2 = {};
+        answersC1 = { ...SAMPLE_ANSWERS_C1 };
+        for (const [q1, ans] of Object.entries(answersC1)) {
+          const q2 = EQUIV_MAP.c1_to_c2[q1];
+          if (q2) answersC2[q2] = ans;
+        }
       }
-      
-      return userAns === key.replace("*", "");
+      renderQuestions();
+      updateProgress();
+      calculateAndShowResults();
     }
 
+    function clearAnswers() {
+      if (confirm('Tem certeza que deseja limpar todas as respostas?')) {
+        answersC1 = {};
+        answersC2 = {};
+        renderQuestions();
+        updateProgress();
+        document.getElementById('dashboard-section').classList.add('hidden');
+        document.getElementById('btn-scroll-results').style.display = 'none';
+      }
+    }
+
+    // TRI Engine (Rasch 1PL via EAP)
     function calculateTRI(rawScore) {
       const N = 100;
       const mu_b = -0.715;
       const sigma_b = 0.75;
-      
+
       function invNorm(p) {
         const a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
         const b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
@@ -805,17 +1175,18 @@
         const z = t / u;
         return p < 0.5 ? -z : z;
       }
-      
+
       const items = [];
       for (let i = 1; i <= N; i++) {
         items.push(mu_b + sigma_b * invNorm(i / (N + 1)));
       }
-      
+
       const steps = 800;
       const minT = -4.0, maxT = 4.0;
       const dt = (maxT - minT) / steps;
       const logPosts = [];
       let maxLogPost = -Infinity;
+
       for (let s = 0; s <= steps; s++) {
         const t = minT + s * dt;
         let logL = t * rawScore;
@@ -827,142 +1198,270 @@
         logPosts.push({ t, logPost });
         if (logPost > maxLogPost) maxLogPost = logPost;
       }
+
       let num = 0, den = 0;
       for (const p of logPosts) {
         const weight = Math.exp(p.logPost - maxLogPost);
         num += p.t * weight * dt;
         den += weight * dt;
       }
+
       const theta = num / den;
       const notaTRI = theta * 17.544 + 67.018;
       const enareScore = notaTRI * 10;
-      
+
       return { theta, notaTRI, enareScore };
     }
 
-    function questionsNeededForCutoff(currentRaw, targetENARE) {
+    function isMatch(userAns, key) {
+      if (!userAns || userAns === '-' || !key) return false;
+      const cleanKey = String(key).trim();
+      if (cleanKey === 'X' || cleanKey === '*' || cleanKey.includes('*')) return true;
+      if (cleanKey.includes('/')) {
+        const parts = cleanKey.replace('*', '').split('/');
+        return parts.includes(userAns);
+      }
+      return userAns === cleanKey.replace('*', '');
+    }
+
+    function calculateAndShowResults() {
+      const keys = getCurrentKeys();
+      const userAns = getCurrentAnswers();
+
+      let hits = { medway: 0, medgrupo: 0, medcofDirect: 0, medcofAnnulled: 0, estrategia: 0 };
+
+      keys.forEach(item => {
+        const u = userAns[item.q];
+        if (!u) return;
+
+        if (item.medway === u) hits.medway++;
+        if (item.medgrupo === u) hits.medgrupo++;
+        if (item.medcof === u) hits.medcofDirect++;
+        if (item.medcof === 'X' || item.medcof === u) hits.medcofAnnulled++;
+        if (isMatch(u, item.estrategia)) hits.estrategia++;
+      });
+
+      const mediaRealista = (hits.medway + hits.medgrupo + hits.medcofAnnulled + hits.estrategia) / 4;
+      const rawInteger = Math.round(mediaRealista);
+
+      const tri = calculateTRI(rawInteger);
+      lastCalculated = { rawMedia: mediaRealista, tri };
+
+      // Update UI Scores
+      document.getElementById('score-medway').textContent = `${hits.medway}/100`;
+      document.getElementById('score-medgrupo').textContent = `${hits.medgrupo}/100`;
+      document.getElementById('score-medcof').textContent = `${hits.medcofDirect}/100`;
+      document.getElementById('score-medcof-annulled').textContent = `${hits.medcofAnnulled} c/ 5 anulações`;
+      document.getElementById('score-estrategia').textContent = `${hits.estrategia}/100`;
+      document.getElementById('score-average').textContent = mediaRealista.toFixed(1);
+
+      // TRI Hero Card
+      const effectiveScore = hasBonus ? tri.enareScore * 1.10 : tri.enareScore;
+      document.getElementById('res-enare-score').textContent = `${effectiveScore.toFixed(1)} pts`;
+      document.getElementById('res-tri-score').textContent = tri.notaTRI.toFixed(2);
+      document.getElementById('res-theta').textContent = (tri.theta >= 0 ? '+' : '') + tri.theta.toFixed(3);
+      document.getElementById('res-realist-media').textContent = `${mediaRealista.toFixed(1)} acertos`;
+      document.getElementById('res-active-booklet').textContent = `Caderno ${currentBooklet}`;
+
+      // Status & Percentile
+      const profBadge = tri.notaTRI >= 60.0 
+        ? '<span class="badge badge-approved">🛡️ Proficiente (Aprovado)</span>'
+        : '<span class="badge badge-below">Abaixo do Corte de 60 pts</span>';
+      document.getElementById('res-proficiency').innerHTML = profBadge;
+
+      let pct = 50;
+      if (rawInteger >= 85) pct = 2;
+      else if (rawInteger >= 80) pct = 5;
+      else if (rawInteger >= 78) pct = 8;
+      else if (rawInteger >= 75) pct = 15;
+      else if (rawInteger >= 70) pct = 28;
+      else if (rawInteger >= 60) pct = 55;
+      document.getElementById('res-percentile').textContent = `Top ${pct}% Nacional`;
+
+      // Render Tables
+      renderSimulatorTable();
+      renderAuditTable();
+
+      // Show Dashboard
+      const dash = document.getElementById('dashboard-section');
+      dash.classList.remove('hidden');
+      document.getElementById('btn-scroll-results').style.display = 'inline-flex';
+      scrollToResults();
+    }
+
+    function scrollToResults() {
+      const dash = document.getElementById('dashboard-section');
+      dash.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function populateSpecialties() {
+      const select = document.getElementById('spec-select');
+      select.innerHTML = '';
+      const specs = Object.keys(CUTOFFS_DATA).sort();
+      specs.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = s;
+        if (s === 'Cirurgia Geral') opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    function toggleBonus() {
+      hasBonus = !hasBonus;
+      const btn = document.getElementById('btn-toggle-bonus');
+      btn.classList.toggle('active', hasBonus);
+      document.getElementById('bonus-indicator').textContent = hasBonus ? '🟣' : '⚪';
+      btn.title = hasBonus ? 'Bônus de 10% ativo!' : 'Clique para ativar bônus de 10%';
+
+      if (lastCalculated.tri.enareScore > 0) {
+        const effective = hasBonus ? lastCalculated.tri.enareScore * 1.10 : lastCalculated.tri.enareScore;
+        document.getElementById('res-enare-score').textContent = `${effective.toFixed(1)} pts`;
+        renderSimulatorTable();
+      }
+    }
+
+    function questionsNeededForCutoff(currentScore, targetCorte) {
+      if (currentScore >= targetCorte) return 0;
+      const currentRaw = Math.round(lastCalculated.rawMedia);
+      
       for (let r = currentRaw; r <= 100; r++) {
         const { enareScore } = calculateTRI(r);
-        if (enareScore >= targetENARE) return r - currentRaw;
+        const eff = hasBonus ? enareScore * 1.10 : enareScore;
+        if (eff >= targetCorte) return r - currentRaw;
       }
       return null;
     }
 
-    function calculateResults() {
-      document.getElementById("step2").classList.add("hidden");
-      document.getElementById("step3").classList.remove("hidden");
-      window.scrollTo(0, 0);
+    function renderSimulatorTable() {
+      const spec = document.getElementById('spec-select').value;
+      const region = document.getElementById('region-filter').value;
+      const tbody = document.getElementById('sim-table-body');
+      tbody.innerHTML = '';
 
-      let scores = { medcof: 0, medway: 0, medgrupo: 0, estrategia: 0 };
-      
-      const tbody = document.getElementById("analysis-body");
-      tbody.innerHTML = "";
+      const items = CUTOFFS_DATA[spec] || [];
+      const userEffectiveScore = hasBonus ? lastCalculated.tri.enareScore * 1.10 : lastCalculated.tri.enareScore;
 
-      ANSWER_KEYS.forEach(item => {
-        const userAns = userAnswers[item.q] || "-";
-        
-        let matchMedcof = isMatch(userAns, item.medcof);
-        let matchMedway = isMatch(userAns, item.medway);
-        let matchMedgrupo = isMatch(userAns, item.medgrupo);
-        let matchEstrategia = isMatch(userAns, item.estrategia);
+      items.forEach(item => {
+        const isSalvador = item.cidade.includes('Salvador') || item.cidade.includes('RMS') || item.cidade.includes('Lauro de Freitas');
+        if (region === 'salvador' && !isSalvador) return;
+        if (region === 'interior' && isSalvador) return;
 
-        if(userAns !== "-") {
-          if (matchMedcof) scores.medcof++;
-          if (matchMedway) scores.medway++;
-          if (matchMedgrupo) scores.medgrupo++;
-          if (matchEstrategia) scores.estrategia++;
-        }
+        const diff = userEffectiveScore - item.corte;
+        let statusBadge = '';
+        let missingText = '';
 
-        let isPossibleAnulacao = item.medcof === "X" || String(item.estrategia).includes("*") || String(item.estrategia) === "X";
-        let tag = isPossibleAnulacao ? "Possível Anulação" : (item.divergente ? "Divergente" : "Consenso");
-        
-        // Determinar status based on media (se a maioria considerar acerto)
-        let acertos = [matchMedcof, matchMedway, matchMedgrupo, matchEstrategia].filter(Boolean).length;
-        let statusHtml = "";
-        if (userAns === "-") {
-          statusHtml = `<span class="status-badge status-erro">❌ Não resp.</span>`;
-        } else if (acertos >= 3) {
-          statusHtml = `<span class="status-badge status-acerto">✅ Acerto</span>`;
-        } else if (acertos === 0) {
-          statusHtml = `<span class="status-badge status-erro">❌ Erro</span>`;
-        } else {
-          statusHtml = `<span class="status-badge status-disputa">⚠️ Em Disputa</span>`;
-        }
-
-        tbody.innerHTML += `
-          <tr>
-            <td>${item.q}</td>
-            <td><strong>${userAns}</strong></td>
-            <td style="color: ${matchMedcof ? 'var(--success)' : (userAns !== '-' ? 'var(--danger)' : '')}">${item.medcof}</td>
-            <td style="color: ${matchMedway ? 'var(--success)' : (userAns !== '-' ? 'var(--danger)' : '')}">${item.medway}</td>
-            <td style="color: ${matchEstrategia ? 'var(--success)' : (userAns !== '-' ? 'var(--danger)' : '')}">${item.estrategia}</td>
-            <td style="color: ${matchMedgrupo ? 'var(--success)' : (userAns !== '-' ? 'var(--danger)' : '')}">${item.medgrupo}</td>
-            <td>${statusHtml}</td>
-            <td>${tag}</td>
-          </tr>
-        `;
-      });
-
-      document.getElementById("score-medcof").textContent = `${scores.medcof}/100`;
-      document.getElementById("score-medway").textContent = `${scores.medway}/100`;
-      document.getElementById("score-medgrupo").textContent = `${scores.medgrupo}/100`;
-      document.getElementById("score-estrategia").textContent = `${scores.estrategia}/100`;
-
-      let media = (scores.medcof + scores.medway + scores.medgrupo + scores.estrategia) / 4;
-      globalRealistMedia = Math.round(media);
-      document.getElementById("score-media").textContent = media.toFixed(1);
-
-      let tri = calculateTRI(globalRealistMedia);
-      globalEnareScore = tri.enareScore;
-      
-      document.getElementById("enare-score").textContent = `${tri.enareScore.toFixed(1)} pontos`;
-      document.getElementById("tri-estimada").textContent = `Nota TRI Estimada: ${tri.notaTRI.toFixed(2)}`;
-    }
-
-    function updateSimulador() {
-      const spec = document.getElementById("specialty-select").value;
-      const table = document.getElementById("simulador-table");
-      const tbody = document.getElementById("simulador-body");
-      
-      if (!spec) {
-        table.classList.add("hidden");
-        return;
-      }
-      
-      table.classList.remove("hidden");
-      tbody.innerHTML = "";
-      
-      const places = CUTOFFS[spec];
-      
-      places.forEach(p => {
-        let diff = globalEnareScore - p.corte;
-        let status = "";
-        if (diff >= 0) status = "✅ Aprovado";
-        else if (diff >= -50) status = "⚠️ Na Fila";
-        else status = "❌ Abaixo";
-        
-        let faltam = "";
         if (diff >= 0) {
-          faltam = "-";
+          statusBadge = '<span class="badge badge-approved">✅ Aprovado (1ª Chamada)</span>';
+          missingText = '<span style="color: var(--success); font-weight: 700;">Vaga garantida!</span>';
+        } else if (diff >= -50) {
+          statusBadge = '<span class="badge badge-waitlist">⚠️ Zona de Reclassificação</span>';
+          const needed = questionsNeededForCutoff(userEffectiveScore, item.corte);
+          missingText = needed !== null 
+            ? `<strong style="color: var(--warning);">+${needed} acerto${needed > 1 ? 's' : ''}</strong> para 1ª chamada`
+            : 'Fila de espera ativa';
         } else {
-          let needed = questionsNeededForCutoff(globalRealistMedia, p.corte);
-          if (needed === null) {
-            faltam = "Impossível (max 100)";
-          } else {
-            faltam = `+${needed} questões`;
-          }
+          statusBadge = '<span class="badge badge-below">❌ Abaixo do Corte</span>';
+          const needed = questionsNeededForCutoff(userEffectiveScore, item.corte);
+          missingText = needed !== null 
+            ? `<span style="color: var(--text-secondary);">+${needed} acertos necessários</span>`
+            : 'Fora do limite de 100 itens';
         }
-        
-        tbody.innerHTML += `
-          <tr>
-            <td>${p.inst}</td>
-            <td>${p.corte}</td>
-            <td>${status}</td>
-            <td>${faltam}</td>
-          </tr>
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${item.inst}</strong></td>
+          <td style="color: var(--text-secondary);">${item.cidade}</td>
+          <td><strong style="color: var(--text-primary); font-size: 1rem;">${item.corte}</strong></td>
+          <td><strong style="color: var(--primary);">${userEffectiveScore.toFixed(1)}</strong></td>
+          <td>${statusBadge}</td>
+          <td>${missingText}</td>
         `;
+        tbody.appendChild(tr);
       });
     }
+
+    function setAuditFilter(filter) {
+      currentAuditFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      renderAuditTable();
+    }
+
+    function renderAuditTable() {
+      const tbody = document.getElementById('audit-table-body');
+      tbody.innerHTML = '';
+      const keys = getCurrentKeys();
+      const userAns = getCurrentAnswers();
+
+      const notesMap = currentBooklet === 1 ? RESOURCE_NOTES_C1 : RESOURCE_NOTES_C2;
+
+      keys.forEach(item => {
+        const u = userAns[item.q] || '-';
+        const isAnulacao = item.medcof === 'X' || String(item.estrategia).includes('*') || String(item.estrategia) === 'X';
+        const mMedway = item.medway === u;
+        const mMedgrupo = item.medgrupo === u;
+        const mMedcof = item.medcof === u || item.medcof === 'X';
+        const mEstrategia = isMatch(u, item.estrategia);
+
+        const hitsCount = [mMedway, mMedgrupo, mMedcof, mEstrategia].filter(Boolean).length;
+        
+        let statusBadge = '';
+        let isCorrect = false;
+        let isWrong = false;
+        let isDisputed = false;
+
+        if (u === '-') {
+          statusBadge = '<span class="badge badge-below">Não respondida</span>';
+        } else if (hitsCount >= 3) {
+          statusBadge = '<span class="badge badge-approved">✅ Acerto</span>';
+          isCorrect = true;
+        } else if (hitsCount === 0) {
+          statusBadge = '<span class="badge badge-below">❌ Erro</span>';
+          isWrong = true;
+        } else {
+          statusBadge = '<span class="badge badge-waitlist">⚠️ Em Disputa</span>';
+          isDisputed = true;
+        }
+
+        // Apply filter
+        if (currentAuditFilter === 'correct' && !isCorrect) return;
+        if (currentAuditFilter === 'wrong' && !isWrong) return;
+        if (currentAuditFilter === 'disputed' && !isDisputed) return;
+        if (currentAuditFilter === 'annulled' && !isAnulacao) return;
+
+        let tagBadge = '';
+        if (isAnulacao) tagBadge = '<span class="badge badge-anulacao">🔴 Recurso / Anulação</span>';
+        else if (item.divergente) tagBadge = '<span class="badge badge-divergente">🟠 Divergente</span>';
+        else tagBadge = '<span class="badge badge-consenso">🟢 Consenso</span>';
+
+        const equivText = currentBooklet === 2 ? `≡ Q${item.equiv_c1} C1` : `≡ Q${EQUIV_MAP.c1_to_c2[item.q]} C2`;
+        const note = notesMap[item.q];
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>Q${item.q}</strong> <span style="font-size:0.75rem; color:var(--text-muted);">(${equivText})</span></td>
+          <td><strong style="color: ${u === '-' ? 'var(--text-muted)' : 'var(--primary)'}; font-size:1.05rem;">${u}</strong></td>
+          <td style="color: ${item.medcof === 'X' ? 'var(--danger)' : (item.medcof === u ? 'var(--success)' : 'var(--text-secondary)')}; font-weight:600;">${item.medcof}</td>
+          <td style="color: ${item.medway === u ? 'var(--success)' : 'var(--text-secondary)'}; font-weight:600;">${item.medway}</td>
+          <td style="color: ${mEstrategia ? 'var(--success)' : 'var(--text-secondary)'}; font-weight:600;">${item.estrategia}</td>
+          <td style="color: ${item.medgrupo === u ? 'var(--success)' : 'var(--text-secondary)'}; font-weight:600;">${item.medgrupo}</td>
+          <td>${statusBadge}</td>
+          <td>${tagBadge}</td>
+        `;
+        tbody.appendChild(tr);
+
+        if (note) {
+          const trNote = document.createElement('tr');
+          trNote.className = 'note-row';
+          trNote.innerHTML = `<td colspan="8">💡 <strong>Análise Clínica / Recurso:</strong> ${note}</td>`;
+          tbody.appendChild(trNote);
+        }
+      });
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>
 </html>
